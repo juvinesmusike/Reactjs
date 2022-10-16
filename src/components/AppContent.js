@@ -25,7 +25,8 @@ const AppContent = () => {
               )
             )
           })}         
-          <Route path="/" element={<Navigate to="Weather" replace />} />
+          <Route path="/" element={<Navigate to="upload" replace />} />
+          <Route path="/*" element={<Navigate to="404" replace />} />
         </Routes>
       </Suspense>
     </CContainer>

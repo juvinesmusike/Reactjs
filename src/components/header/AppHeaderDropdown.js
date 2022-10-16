@@ -28,18 +28,17 @@ import { logOut } from 'src/features/auth/authSlice'
 import { useDispatch } from 'react-redux'
 
 
-const AppHeaderDropdown = () => {
 
+const AppHeaderDropdown = () => {
+  const username = JSON.parse(localStorage.getItem("user")).username;
   const dispatch = useDispatch();
   const LogOut = (e) => {
     dispatch(logOut())
   }
-
-
-
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0" caret={false}>
+        <span className="mx-2" ><b>{username}</b></span>
         <CAvatar src={avatar8} size="md" />
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">

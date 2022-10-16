@@ -1,7 +1,10 @@
-import { CButton, CForm, CFormInput } from '@coreui/react'
+import { CButton, CForm, CFormInput , CImage } from '@coreui/react'
 import React, { useState } from 'react'
 import ReactFileReader from 'react-file-reader';
 import axios from 'axios';
+import Loading from 'src/assets/images/loading.gif'
+import { toastSuccess , toastError , toastWarning } from 'src/app/toast'
+import { ToastContainer } from 'react-toastify';
 
 import { useUploadMutation } from 'src/features/functions/UploadSlice'
 
@@ -13,54 +16,54 @@ const UploadExcel = () => {
     const [ upload ] = useUploadMutation()
     const [file , setFile] = useState()
     const [filename , setFilename] = useState()
+    const [loading , Setloading] = useState(false)
 
     const onChange = (e) => {
         setFile(e.target.files[0])
     }
     
     const  onSubmit = async (e) =>{
+        Setloading(true);
         e.preventDefault()
         try 
         {
-            let formData = new FormData()
-            formData.append('file',file);
-           var result = await upload({formData}).unwrap();
-            console.log(result)
+            if(file){
+                let formData = new FormData()
+                formData.append('file',file);
+              //  console.log(formData)
+                var result = await upload(formData).unwrap();  
+                if(result.isSuccess){
+                    toastSuccess("File Uploaded!")
+                    setFile('')
+                    Setloading(false)
+                }else{
+                    toastWarning(result.message)
+                    Setloading(false)
+                }
+            }else{
+                toastWarning("Please Select a File!")
+                Setloading(false)
+            }
 
-        // await axios({
-        //         url:"https://localhost:7033/Uploadexcel/Upload",
-        //         method:"POST",
-        //         headers:{
-        //             "Content-Type": "multipart/form-data",
-        //             "Authorization": `Bearer ${token}`
-        //         },
-        //         data:formData
-        //     }).then((res) => {
-        //         console.log(res)
-        //     });
+           
         }
         catch(errMsg)
         {
-            console.log(errMsg)
+          console.log(errMsg)
+            toastError("Server Error")
+            Setloading(false)
         }
-  
-   
     }
+
+    const ViewLoading = (loading) ? <CImage src={Loading} style={{ zIndex:'1', display:'flex' ,position:'fixed' , left:'55%' , top:'40%' , width:'100px'}}/> : ""
   return (
    <section>
+    < ToastContainer/>
     <CForm onSubmit={onSubmit} encType="multipart/form-data"> 
+        {ViewLoading}
          <CFormInput type='file' name="file" className='mb-3' onChange={onChange}  />
-         <CFormInput type='submit' value="Submit"/>
-    </CForm>
-       
-        {/* <ReactFileReader fileTypes={[".csv",".xlsx"]} base64={true} multipleFiles={false} handleFiles={handleFiles}>
-            <button className='btn'>Upload</button>
-            </ReactFileReader>
-
-            <CButton type='submit' onClick={onSubmit}>click</CButton> */}
-                
-   
-  
+         <CFormInput type='submit' value="Submit" className="btn btn-primary"/>
+    </CForm>  
    </section>
   )
 }

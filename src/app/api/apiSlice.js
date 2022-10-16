@@ -1,52 +1,62 @@
-import {createApi , fetchBaseQuery} from '@reduxjs/toolkit/query/react'
-import { setCredentials , logOut } from '../../features/auth/authSlice'
-
-
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { setCredentials, logOut } from '../../features/auth/authSlice'
 
 const baseQuery = fetchBaseQuery({
-    baseUrl:'https://localhost:7033/',
-    credentials:'include',
-    prepareHeaders:(headers ,{ getState }) =>{
-        const localtoken = localStorage.getItem("user") 
-        const token = localtoken != null ? JSON.parse(localtoken).token : null
-        
-        if(token){
-            headers.set("Authorization", `Bearer ${token}`)
-        }
-        return headers
-        
-
+  baseUrl: 'https://localhost:7033/',
+  // credentials:'include',
+  prepareHeaders: (headers, { getState }) => {
+    const localtoken = localStorage.getItem('user')
+    const token = localtoken != null ? JSON.parse(localtoken).token : null
+    // console.log(token)
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
     }
+    return headers
+  },
 })
 
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions)
+  // console.log(result?.error)
 
+  if (result?.error?.originalStatus === 500) {
+    api.dispatch(logOut())
+  } else {
+    // console.log(result)
+    if (result?.error?.status === 401) {
+      const localtoken = localStorage.getItem('user')
+      const refreshToken = localtoken != null ? JSON.parse(localtoken).refreshToken : null
+      const token = localtoken != null ? JSON.parse(localtoken).token : null
+      const username = localtoken != null ? JSON.parse(localtoken).username : null
 
-const baseQueryWithReauth = async(args , api , extraOptions) =>{
+      // console.log(refreshToken)
 
-    let result = await baseQuery(args, api , extraOptions)
+      const refreshResult = await baseQuery(
+        {
+          url: 'Auth/refreshToken',
+          method: 'POST',
+          body: { token, refreshToken },
+        },
+        api,
+        extraOptions,
+      )
 
-    console.log(result)
-    if(result?.error?.status === 401){
-        // console.log('sending refresh token')
-        //  const refreshResult = await baseQuery('Auth/refreshToken' , api , extraOptions)
-        //   // const refreshResult = await baseQuery('api/Auth/refreshToken' , api , extraOptions)
-        // console.log(refreshResult)
+      console.log(refreshResult)
 
-        // if(refreshResult?.data){
-        //     const username = api.getState().auth.username
+      if (refreshResult?.data) {
+        console.log(refreshResult?.data)
+        api.dispatch(setCredentials({ ...refreshResult.data, username }))
 
-        //     api.dispatch(setCredentials({...refreshResult.data, username}))
-
-        //     result = await baseQuery(args , api , extraOptions)
-        // }else{
-            api.dispatch(logOut())
-      //  }
+        result = await baseQuery(args, api, extraOptions)
+      } else {
+        api.dispatch(logOut())
+      }
     }
     return result
+  }
 }
 
-
 export const apiSlice = createApi({
-    baseQuery: baseQueryWithReauth,
-    endpoints: builder => ({})
+  baseQuery: baseQueryWithReauth,
+  endpoints: (builder) => ({}),
 })
