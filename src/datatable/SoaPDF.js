@@ -10,7 +10,7 @@ const SoaPDF = ({ shitnetData, defaultValues, footertable, annexReportLetter }) 
   const doc = new jsPDF('p', 'mm', 'a4')
 
   const ReturnAmount = (subkey, annexletter) => {
-    console.log(annexletter)
+    // console.log(annexletter)
     var amount = 0
     shitnetData?.map((row) => {
       if (row.annexSubkey == subkey && row.annexLetter == annexletter) {

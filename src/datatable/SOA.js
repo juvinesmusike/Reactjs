@@ -20,6 +20,9 @@ const SOA = () => {
   const [filtereddata, setFiltereddata] = useState([])
   const [showEntry, setShowEntry] = useState(false)
 
+  const [vesselname, setVesselName] = useState([])
+  const [entrydate, setEntryDate] = useState([])
+
   const { data } = useJournalsQuery()
 
   const [show, setShow] = useState(false)
@@ -29,7 +32,9 @@ const SOA = () => {
     setShow(true)
     var result = await shipnetreport({ shipcode: row.shipCode }).unwrap()
     SetShipnetData(result)
-    // console.log('result')
+    setVesselName(row.companyName)
+    setEntryDate(row.entryDate)
+    //console.log(row.companyName)
   }
 
   const getdata = () => {
@@ -37,7 +42,7 @@ const SOA = () => {
       setDatas(data)
       LoadArrayList()
     } catch (error) {
-      console.log(error)
+      // console.log(error)
     }
   }
 
@@ -49,7 +54,7 @@ const SOA = () => {
         list.push({ id: row.id, entrydate: row.entryDate })
       }
     })
-    console.log(list)
+    //  console.log(list)
     setEntryDateArray(list)
   }
   const column = [
@@ -128,19 +133,21 @@ const SOA = () => {
     <>
       <Modal show={show} onHide={handleClose} size={'xl'}>
         <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+          <Modal.Title>Statement of Account Report</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
-            <Form.Label column sm={2} md={2} style={{ fontWeight: 'bold' }}>
+            <Form.Label column sm={2} md={1} style={{ fontWeight: 'bold' }}>
               Vessel:
             </Form.Label>
             <Form.Label
               column
               sm={2}
-              md={3}
+              md={4}
               style={{ fontWeight: 'bold', textDecoration: 'underline' }}
-            ></Form.Label>
+            >
+              {vesselname}
+            </Form.Label>
             <Form.Label column sm={2} md={2} style={{ fontWeight: 'bold' }}>
               Date :
             </Form.Label>
@@ -149,7 +156,9 @@ const SOA = () => {
               sm={2}
               md={3}
               style={{ fontWeight: 'bold', textDecoration: 'underline' }}
-            ></Form.Label>
+            >
+              {entrydate}
+            </Form.Label>
             <Form.Label column sm={2} md={2} style={{ fontWeight: 'bold' }}>
               To :
             </Form.Label>

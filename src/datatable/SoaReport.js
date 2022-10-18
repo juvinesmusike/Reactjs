@@ -83,7 +83,7 @@ const SoaReport = ({ shitnetData }) => {
         }
       }
     })
-    console.log(annexlist)
+    //console.log(annexlist)
     setannexLetter(annexlist)
     // annexlist?.map((a_row) => {
     //   const doc = new jsPDF('p', 'mm', 'a4')
@@ -103,8 +103,6 @@ const SoaReport = ({ shitnetData }) => {
     // })
     //
   }
-
-  const LoadShipNet = (shipnetcode) => {}
 
   const setDatasValue = () => {
     setDatas([
@@ -173,7 +171,7 @@ const SoaReport = ({ shitnetData }) => {
     setDatasValue()
     Footer()
     LoadAnnexReport()
-    console.log(shitnetData)
+    // console.log(shitnetData)
     // console.log(shitnetData)
   }, [shitnetData])
   return (
@@ -271,7 +269,6 @@ const SoaReport = ({ shitnetData }) => {
             footertable={footertable}
             annexReportLetter={annexLetter}
           />
-          / <CButton onClick={() => LoadAnnexReport()}>Export</CButton>
         </Col>
       </Row>
     </>

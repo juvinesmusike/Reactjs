@@ -16,6 +16,8 @@ const JournalSubTable = ({ voucherdetials }) => {
   const [notedby, setNotedby] = useState('')
   const [approvedby, setApprovedby] = useState('')
   const [template, setTemplate] = useState('0')
+  const [footername, setFootername] = useState([])
+
   const doc = new jsPDF('p', 'mm', 'a4')
   const column = [
     {
@@ -61,6 +63,24 @@ const JournalSubTable = ({ voucherdetials }) => {
     console.log(voucherdetials.comments.replace(/(\r\n|\r|\n)/g, ''))
   }
 
+  const CaseFootername = (template) => {
+    switch (template.toLowerCase()) {
+      case 'cash receipt':
+        setFootername('RJ Number')
+        break
+      case 'general':
+        setFootername('JV Number')
+        break
+      case 'disbursement':
+        setFootername('CV Number')
+        break
+      case 'revenue':
+        setFootername('JV Number')
+        break
+      case '':
+        break
+    }
+  }
   const addFooters = (doc) => {
     const pageCount = doc.internal.getNumberOfPages()
 
@@ -352,7 +372,7 @@ const JournalSubTable = ({ voucherdetials }) => {
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(120, 265, `Voucher No: ________________________________`)
+      doc.text(120, 265, `${footername}: ________________________________`)
 
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9)
@@ -430,7 +450,14 @@ const JournalSubTable = ({ voucherdetials }) => {
           Select Template :
         </Form.Label>
         <Col md="4" className="mb-3">
-          <Form.Select size={'sm'} value={template} onChange={(e) => setTemplate(e.target.value)}>
+          <Form.Select
+            size={'sm'}
+            value={template}
+            onChange={(e) => {
+              setTemplate(e.target.value)
+              CaseFootername(e.target.value)
+            }}
+          >
             <option value="0">-- OPTIONS --</option>
             <option value="DISBURSEMENT">DISBURSEMENT</option>
             <option value="REVENUE">REVENUE</option>
