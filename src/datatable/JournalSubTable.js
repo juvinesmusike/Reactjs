@@ -15,8 +15,14 @@ const JournalSubTable = ({ voucherdetials }) => {
   const [checkedby, setCheckedby] = useState('')
   const [notedby, setNotedby] = useState('')
   const [approvedby, setApprovedby] = useState('')
+  const [receivedamount, setReceivedamount] = useState('')
+  const [per, setPer] = useState('')
+  const [checkno, setCheckNo] = useState('')
+
   const [template, setTemplate] = useState('0')
   const [footername, setFootername] = useState([])
+
+  const [deductedspace, setDeductedspace] = useState(0)
 
   const doc = new jsPDF('p', 'mm', 'a4')
   const column = [
@@ -65,16 +71,21 @@ const JournalSubTable = ({ voucherdetials }) => {
 
   const CaseFootername = (template) => {
     switch (template.toLowerCase()) {
-      case 'cash receipt':
+      case 'cash receipts':
+        setDeductedspace(0)
         setFootername('RJ Number')
         break
       case 'general':
+        setDeductedspace(0)
         setFootername('JV Number')
         break
       case 'disbursement':
+        setDeductedspace(30)
         setFootername('CV Number')
+
         break
       case 'revenue':
+        setDeductedspace(0)
         setFootername('JV Number')
         break
       case '':
@@ -97,6 +108,50 @@ const JournalSubTable = ({ voucherdetials }) => {
         },
       )
     }
+  }
+
+  const ViewFooter = () => {
+    return (
+      <Row>
+        <Col md={6}>
+          <Form.Group className="mb-3">
+            <Form.Label>Received Amount</Form.Label>
+            <Form.Control
+              type="text"
+              size={'sm'}
+              placeholder="Received Amount"
+              value={receivedamount}
+              onChange={(e) => setReceivedamount(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+
+        <Col md={3}>
+          <Form.Group className="mb-3">
+            <Form.Label>Per</Form.Label>
+            <Form.Control
+              type="text"
+              size={'sm'}
+              placeholder="Per"
+              value={per}
+              onChange={(e) => setPer(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+        <Col md={3}>
+          <Form.Group className="mb-3">
+            <Form.Label>Check No.</Form.Label>
+            <Form.Control
+              type="text"
+              size={'sm'}
+              placeholder="Check No."
+              value={checkno}
+              onChange={(e) => setCheckNo(e.target.value)}
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+    )
   }
 
   const dlPDF = () => {
@@ -260,7 +315,7 @@ const JournalSubTable = ({ voucherdetials }) => {
         tableLineColor: [0, 0, 0],
         //  tableLineWidth: 0.3,
         theme: 'plain',
-        margin: { bottom: 50 },
+        //  margin: { bottom: 50 },
 
         //   bodyStyles: { minCellHeight: 80 },
         styles: {
@@ -300,11 +355,11 @@ const JournalSubTable = ({ voucherdetials }) => {
               data.cell.y + data.cell.height,
             )
             // draw left border
-            doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x, 230)
+            doc.line(data.cell.x, data.cell.y + data.cell.height, data.cell.x, 230 - deductedspace)
             //draw right border
             doc.line(
               data.cell.x + data.cell.width,
-              230,
+              230 - deductedspace,
               data.cell.x + data.cell.width,
               data.cell.y + data.cell.height,
             )
@@ -316,55 +371,88 @@ const JournalSubTable = ({ voucherdetials }) => {
 
       doc.setLineWidth(0.3)
       doc.setDrawColor(0, 0, 0)
-      doc.line(196, 230, 14, 230)
+      doc.line(196, 230 - deductedspace, 14, 230 - deductedspace)
 
       doc.setLineWidth(0.3)
       doc.setDrawColor(0, 0, 0)
-      doc.line(14, 245, 14, 150)
+      doc.line(14, 245 - deductedspace, 14, 150 - deductedspace)
 
       doc.setLineWidth(0.3)
       doc.setDrawColor(0, 0, 0)
-      doc.line(196, 245, 196, 150)
+      doc.line(196, 245 - deductedspace, 196, 150 - deductedspace)
 
       doc.setLineWidth(0.3)
       doc.setDrawColor(0, 0, 0)
-      doc.line(196, 245, 14, 245)
+      doc.line(196, 245 - deductedspace, 14, 245 - deductedspace)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(35, 235, `Prepared By`)
+      doc.text(35, 235 - deductedspace, `Prepared By`)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(preparedby, 35, 243)
+      doc.text(preparedby, 35, 243 - 50)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(80, 235, `Checked By`)
+      doc.text(80, 235 - deductedspace, `Checked By`)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(checkedby, 80, 243)
+      doc.text(checkedby, 80, 243 - deductedspace)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(120, 235, `Noted By`)
+      doc.text(120, 235 - deductedspace, `Noted By`)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(notedby, 120, 243)
+      doc.text(notedby, 120, 243 - deductedspace)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(160, 235, `Approved By`)
+      doc.text(160, 235 - deductedspace, `Approved By`)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(approvedby, 160, 243)
+      doc.text(approvedby, 160, 243 - deductedspace)
+
+      //--- Disbursement template --------------
+      var addspacefooter = 0
+      if (deductedspace != 0) {
+        addspacefooter = 25
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.text(
+          14,
+          255 - deductedspace,
+          `Received the Amount of: _________________________________________________________________________________`,
+        )
+
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.text(14, 265 - deductedspace, `Per: _______________________________`)
+
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.text(90, 265 - deductedspace, `Check No: _______________________________`)
+
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.text(120, 275 - deductedspace, `Signature: _________________________________`)
+
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(9)
+        doc.text(120, 285 - deductedspace, `Printed Name: ______________________________`)
+      }
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(120, 255, `Received By: _______________________________`)
+      doc.text(
+        120,
+        255 - deductedspace + addspacefooter,
+        `Received By: _______________________________`,
+      )
 
       // doc.setFont('helvetica', 'normal')
       // doc.setFontSize(9)
@@ -372,14 +460,19 @@ const JournalSubTable = ({ voucherdetials }) => {
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9)
-      doc.text(120, 265, `${footername}: ________________________________`)
+      doc.text(
+        120,
+        265 - deductedspace + addspacefooter,
+        `${footername}: ________________________________`,
+      )
 
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9)
-      doc.text(voucherdetials.voucher, 145, 265)
+      doc.text(voucherdetials.voucher, 145, 265 - deductedspace + addspacefooter)
 
       doc.save('sample.pdf')
       setTemplate('0')
+      setDeductedspace(0)
     } else {
       toastWarning('Select a Template!')
       //-- select template
@@ -444,6 +537,7 @@ const JournalSubTable = ({ voucherdetials }) => {
           </Form.Group>
         </Col>
       </Row>
+      {deductedspace != 0 ? <ViewFooter /> : ''}
       <hr />
       <Form.Group as={Row}>
         <Form.Label column md="2">
