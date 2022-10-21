@@ -76,9 +76,6 @@ export const AnnexSetupSlice = apiSlice.injectEndpoints({
         body: { ...data },
       }),
     }),
-    vissellist: build.query({
-      query: () => 'AnnexSetup/vissellist',
-    }),
   }),
 })
 
@@ -94,7 +91,6 @@ export const {
   useSaveannexsubMutation,
   useUpdateannextypeMutation,
   useDeleteannextypeMutation,
-  useVissellistQuery,
   useGetannextypeMutation,
   useGetannexsubkeyMutation,
 } = AnnexSetupSlice

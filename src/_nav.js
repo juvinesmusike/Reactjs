@@ -70,6 +70,11 @@ const _nav = [
         name: 'Annex Set-up',
         to: '/maintenance/annexsetup',
       },
+      {
+        component: CNavItem,
+        name: 'Vessel Set-up',
+        to: '/maintenance/vesselsetup',
+      },
     ],
   },
   // {

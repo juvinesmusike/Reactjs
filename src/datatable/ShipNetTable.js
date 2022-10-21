@@ -14,7 +14,6 @@ import {
   useSaveannexsubMutation,
   useUpdateannextypeMutation,
   useDeleteannextypeMutation,
-  useVissellistQuery,
   useGetmaingroupMutation,
   useGetannextypeMutation,
   useGetannexsubkeyMutation,
@@ -88,9 +87,6 @@ const ShipNetTable = () => {
   const [saveannexsub] = useSaveannexsubMutation()
   const [getannexsubkey] = useGetannexsubkeyMutation()
   const annexsubkey = useAnnexsubkeyQuery()
-
-  //load all Vissel shipcode
-  const { data: VisselData } = useVissellistQuery()
 
   //-- local variables
   const [shipcode, setShipcode] = useState('')
