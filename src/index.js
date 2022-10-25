@@ -11,7 +11,7 @@ import { Helmet } from 'react-helmet'
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <Helmet>
-      <meta http-equiv="Content-Security-Policy-Report-Only" content="upgrade-insecure-requests" />
+      <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
     </Helmet>
     <App />
   </Provider>,
