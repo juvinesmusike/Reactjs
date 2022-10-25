@@ -11,7 +11,11 @@ import { Helmet } from 'react-helmet'
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <Helmet>
-      <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+      <meta
+        http-equiv="Content-Security-Policy"
+        //  content="upgrade-insecure-requests"
+        report-uri="http://juvinesmusike-001-site1.ftempurl.com/"
+      />
     </Helmet>
     <App />
   </Provider>,
